@@ -2,7 +2,7 @@
 {
     public class User
     {
-        // Testing git
+        // Testing git time 2
         public long UserId { get; set; }
         public string Username { get; set; }
         public string PasswordHash { get; set; }
