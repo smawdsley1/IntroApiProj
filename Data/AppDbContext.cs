@@ -9,9 +9,6 @@ namespace moontest1.Data
         : base(options)
         {
         }
-
-        //public DbSet<User> Users { get; set; }
-       // public DbSet<Item> Items { get; set; }
         public DbSet<Category> Category { get; set; }
         public DbSet<User> User { get; set; }
     }
