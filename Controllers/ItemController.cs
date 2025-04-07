@@ -1,7 +1,9 @@
 ﻿using IntroAPIProject.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using moontest1.Data;
+using moontest1.Models;
 
 namespace IntroAPIProject.Controllers
 {
@@ -13,6 +15,7 @@ namespace IntroAPIProject.Controllers
         {
             _db = db;
         }
+        [Authorize(Roles = "User, Admin")]
         [HttpGet("[action]")]
         public async Task<IActionResult> getItems() 
         {
@@ -28,14 +31,23 @@ namespace IntroAPIProject.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin, User")]
         [HttpPost("[action]")]
-        public async Task<IActionResult> postItem([FromBody] Item newItem)
+        public async Task<IActionResult> postItem([FromBody] Item model)
         {
             try
             {
-                await _db.Item.AddAsync(newItem);
+                var NewItem = new Item{
+                    UserId = model.UserId,
+                    CategoryId = model.CategoryId,
+                    ItemName = model.ItemName,
+                    Description = model.Description,
+                    Price = model.Price,
+                    IsActive = model.IsActive,
+                };
+                _db.Item.Add(NewItem);
                 await _db.SaveChangesAsync();
-                return Ok(newItem);
+                return Ok();
             }
             catch (Exception e)
             {
@@ -43,6 +55,8 @@ namespace IntroAPIProject.Controllers
                 return BadRequest(e.Message);
             }
         }
+
+        // we want to only authorize users that have created this item to update said item 
         [HttpPut("[action]/{id}")]
         public async Task<IActionResult> updateItem(Int64 id, [FromBody] Item updatedItem)
         {
@@ -71,6 +85,9 @@ namespace IntroAPIProject.Controllers
                 return BadRequest(e.Message);
             }
         }
+
+        // we only want to authorize admins and the user who posted the item to be able to delete something
+        [Authorize(Roles = "Admin")]
         [HttpDelete("[action]/{id}")]
         public async Task<IActionResult> deleteItem(Int64 id)
         {

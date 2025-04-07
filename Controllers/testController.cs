@@ -17,7 +17,7 @@ namespace moontest1.Controllers
         [Authorize(Roles = "User")]
         public IActionResult UserAccess() // only allows user roles
         {
-            return Ok("Welcome, User or Admin!");
+            return Ok("Welcome, User");
         }
 
         [HttpGet("Public")]
